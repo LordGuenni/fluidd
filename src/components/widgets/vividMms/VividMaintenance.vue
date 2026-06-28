@@ -1,7 +1,7 @@
 <template>
   <div class="vivid-maintenance pa-2">
     <h4 class="text-subtitle-2 mb-2">
-      RFID Operations
+      {{ $t('app.vividMms.rfid_operations') }}
     </h4>
     <v-alert
       v-if="selectedLane === null"
@@ -9,7 +9,7 @@
       dense
       text
     >
-      Select a lane above to perform RFID operations.
+      {{ $t('app.vividMms.select_lane_rfid') }}
     </v-alert>
     <div
       v-else
@@ -24,14 +24,14 @@
       >
         <v-icon left>
           mdi-nfc
-        </v-icon> Read RFID on Lane {{ selectedLane }}
+        </v-icon> {{ $t('app.vividMms.read_rfid_lane', { selectedLane }) }}
       </v-btn>
     </div>
 
     <v-divider class="my-4" />
 
     <h4 class="text-subtitle-2 mb-2">
-      Hardware Maintenance
+      {{ $t('app.vividMms.hardware_maintenance') }}
     </h4>
     <v-alert
       v-if="selectedLane === null"
@@ -39,7 +39,7 @@
       dense
       text
     >
-      Select a lane above to perform hardware operations.
+      {{ $t('app.vividMms.select_lane_hardware') }}
     </v-alert>
     <div
       v-else
@@ -54,7 +54,7 @@
       >
         <v-icon left>
           mdi-target
-        </v-icon> Select Slot
+        </v-icon> {{ $t('app.vividMms.select_slot') }}
       </v-btn>
       <v-btn
         small
@@ -64,7 +64,7 @@
       >
         <v-icon left>
           mdi-download
-        </v-icon> Load Filament
+        </v-icon> {{ $t('app.vividMms.preload_to_feeder') }}
       </v-btn>
       <v-btn
         small
@@ -74,7 +74,7 @@
       >
         <v-icon left>
           mdi-eject-outline
-        </v-icon> Pop Filament
+        </v-icon> {{ $t('app.vividMms.pop_filament') }}
       </v-btn>
     </div>
   </div>
@@ -104,7 +104,7 @@ export default class VividMaintenance extends Vue {
 
   preloadLane () {
     if (this.selectedLane !== null) {
-      this.$store.dispatch('vividMms/sendMacro', { macro: `T${this.selectedLane}` })
+      this.$store.dispatch('vividMms/preloadLane', this.selectedLane)
     }
   }
 

@@ -14,7 +14,7 @@ export const actions: ActionTree<VividMmsState, RootState> = {
     await SocketActions.printerGcodeScript(gcode)
   },
   loadLane ({ dispatch }, laneId: number) {
-    return dispatch('sendMacro', { macro: 'MMS_LOAD_SLOT', params: { SLOT_NUM: laneId } })
+    return dispatch('sendMacro', { macro: `T${laneId}` })
   },
   preloadLane ({ dispatch }, laneId: number) {
     return dispatch('sendMacro', { macro: 'MMS_PRELOAD', params: { SLOT_NUM: laneId } })
@@ -32,7 +32,7 @@ export const actions: ActionTree<VividMmsState, RootState> = {
     return dispatch('sendMacro', { macro: 'MMS_EJECT_SLOT' })
   },
   cutFilament ({ dispatch }) {
-    return dispatch('sendMacro', { macro: 'MMS_CUTTER_TEST' })
+    return dispatch('sendMacro', { macro: 'MMS_CUT' })
   },
   brushNozzle ({ dispatch }) {
     return dispatch('sendMacro', { macro: 'MMS_BRUSH' })

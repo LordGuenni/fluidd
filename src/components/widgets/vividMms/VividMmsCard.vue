@@ -1,6 +1,6 @@
 <template>
   <collapsable-card
-    title="Vivid MMU"
+    :title="$t('app.vividMms.title')"
     icon="$mmu"
     draggable
     layout-path="dashboard.vivid-mms-card"
@@ -29,6 +29,7 @@
       />
     </v-card-text>
 
+    <v-divider />
     <!-- Advanced / Maintenance Section -->
     <v-expansion-panels flat>
       <v-expansion-panel>
@@ -36,7 +37,7 @@
           <div>
             <v-icon left>
               mdi-cog
-            </v-icon> Advanced & Maintenance
+            </v-icon> {{ $t('app.vividMms.advanced_maintenance') }}
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>

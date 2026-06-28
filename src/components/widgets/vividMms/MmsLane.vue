@@ -39,10 +39,10 @@
           </template>
           <template v-else>
             <div class="text-caption text-grey">
-              Empty / Unassigned
+              {{ $t('app.vividMms.empty_unassigned') }}
             </div>
             <div class="text-caption primary--text">
-              Click to bind
+              {{ $t('app.vividMms.click_to_bind') }}
             </div>
           </template>
         </div>
@@ -64,7 +64,7 @@
           color="success"
           @click.stop="loadLane"
         >
-          Load to Extruder
+          {{ $t('app.vividMms.load_to_extruder') }}
         </v-btn>
         <v-btn
           x-small
@@ -73,7 +73,7 @@
           color="info"
           @click.stop="selectLane"
         >
-          Select Slot
+          {{ $t('app.vividMms.select_slot') }}
         </v-btn>
         <v-btn
           x-small
@@ -82,7 +82,7 @@
           color="primary"
           @click.stop="preloadLane"
         >
-          Pre-load to Feeder
+          {{ $t('app.vividMms.preload_to_feeder') }}
         </v-btn>
         <v-btn
           x-small
@@ -91,7 +91,7 @@
           color="warning"
           @click.stop="popLane"
         >
-          Pop Slot
+          {{ $t('app.vividMms.pop_slot') }}
         </v-btn>
       </div>
     </v-card-actions>

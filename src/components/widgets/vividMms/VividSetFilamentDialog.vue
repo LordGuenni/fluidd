@@ -6,15 +6,15 @@
   >
     <v-card>
       <v-card-title>
-        Set Filament - Slot {{ laneId }}
+        {{ $t('app.vividMms.set_filament_slot', { laneId }) }}
       </v-card-title>
 
       <v-card-text>
         <v-switch
           v-model="useSpoolman"
-          label="Use Spoolman"
+          :label="$t('app.vividMms.use_spoolman').toString()"
           :disabled="!hasSpoolman"
-          :hint="hasSpoolman ? '' : 'Spoolman must be configured to use this feature'"
+          :hint="hasSpoolman ? '' : $t('app.vividMms.spoolman_must_be_configured').toString()"
           :persistent-hint="!hasSpoolman"
           class="mt-0 mb-4"
         >
@@ -35,7 +35,7 @@
           :items="spoolsList"
           item-text="displayText"
           item-value="id"
-          label="Select Spool from Spoolman"
+          :label="$t('app.vividMms.select_spool_spoolman').toString()"
           outlined
           dense
           class="mb-2"
@@ -47,7 +47,7 @@
             <v-list-item-content>
               <v-list-item-title>{{ item.displayText }}</v-list-item-title>
               <v-list-item-subtitle v-if="item.remaining != null">
-                {{ item.remaining.toFixed(1) }}g remaining
+                {{ $t('app.vividMms.g_remaining', { remaining: item.remaining.toFixed(1) }) }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </template>
@@ -56,16 +56,16 @@
         <v-form @submit.prevent="save">
           <v-text-field
             v-model="formData.vendor"
-            label="Vendor"
-            placeholder="e.g. Polymaker"
+            :label="$t('app.vividMms.vendor').toString()"
+            :placeholder="$t('app.vividMms.eg_polymaker').toString()"
             outlined
             dense
             :disabled="useSpoolman"
           />
           <v-text-field
             v-model="formData.material"
-            label="Material"
-            placeholder="e.g. PLA"
+            :label="$t('app.vividMms.material').toString()"
+            :placeholder="$t('app.vividMms.eg_pla').toString()"
             outlined
             dense
             :disabled="useSpoolman"
@@ -76,7 +76,7 @@
             align="center"
           >
             <v-col cols="auto">
-              <span class="mr-2">Color:</span>
+              <span class="mr-2">{{ $t('app.vividMms.color') }}</span>
             </v-col>
             <v-col cols="auto">
               <input
@@ -89,7 +89,7 @@
             <v-col>
               <v-text-field
                 v-model="formData.color"
-                label="Hex Code"
+                :label="$t('app.vividMms.hex_code').toString()"
                 outlined
                 dense
                 hide-details
@@ -104,14 +104,14 @@
           >
             <v-expansion-panel>
               <v-expansion-panel-header class="pa-0 text-button text--secondary">
-                Advanced (RFID & Print Settings)
+                {{ $t('app.vividMms.advanced_settings') }}
               </v-expansion-panel-header>
               <v-expansion-panel-content class="pt-4">
                 <v-row dense>
                   <v-col cols="6">
                     <v-text-field
                       v-model.number="formData.min_print_temperature"
-                      label="Min Extruder Temp"
+                      :label="$t('app.vividMms.min_extruder_temp').toString()"
                       type="number"
                       dense
                       outlined
@@ -121,7 +121,7 @@
                   <v-col cols="6">
                     <v-text-field
                       v-model.number="formData.max_print_temperature"
-                      label="Max Extruder Temp"
+                      :label="$t('app.vividMms.max_extruder_temp').toString()"
                       type="number"
                       dense
                       outlined
@@ -131,7 +131,7 @@
                   <v-col cols="6">
                     <v-text-field
                       v-model.number="formData.min_bed_temperature"
-                      label="Min Bed Temp"
+                      :label="$t('app.vividMms.min_bed_temp').toString()"
                       type="number"
                       dense
                       outlined
@@ -141,7 +141,7 @@
                   <v-col cols="6">
                     <v-text-field
                       v-model.number="formData.max_bed_temperature"
-                      label="Max Bed Temp"
+                      :label="$t('app.vividMms.max_bed_temp').toString()"
                       type="number"
                       dense
                       outlined
@@ -151,7 +151,7 @@
                   <v-col cols="6">
                     <v-text-field
                       v-model.number="formData.nominal_netto_full_weight"
-                      label="Filament Weight (g)"
+                      :label="$t('app.vividMms.filament_weight').toString()"
                       type="number"
                       dense
                       outlined
@@ -161,7 +161,7 @@
                   <v-col cols="6">
                     <v-text-field
                       v-model.number="formData.empty_container_weight"
-                      label="Spool Weight (g)"
+                      :label="$t('app.vividMms.spool_weight').toString()"
                       type="number"
                       dense
                       outlined
@@ -175,7 +175,7 @@
 
           <v-checkbox
             v-model="writeToRfid"
-            label="Write to RFID Tag"
+            :label="$t('app.vividMms.write_to_rfid').toString()"
             hide-details
             class="mt-0 mb-4"
           />
@@ -188,20 +188,20 @@
           color="error"
           @click="clearSlot"
         >
-          Clear Slot
+          {{ $t('app.vividMms.clear_slot') }}
         </v-btn>
         <v-spacer />
         <v-btn
           text
           @click="close"
         >
-          Cancel
+          {{ $t('app.vividMms.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
           @click="save"
         >
-          Save
+          {{ $t('app.vividMms.save') }}
         </v-btn>
       </v-card-actions>
     </v-card>

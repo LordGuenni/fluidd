@@ -21,7 +21,7 @@
                 v-if="physicalLane === lane"
                 small
                 color="primary"
-                title="Hardware active"
+                :title="$t('app.vividMms.hardware_active').toString()"
               >
                 mdi-check-circle
               </v-icon>
@@ -30,7 +30,7 @@
                 icon
                 small
                 :disabled="!canExecuteAction"
-                title="Read RFID"
+                :title="$t('app.vividMms.read_rfid').toString()"
                 class="rfid-btn"
                 @click="triggerRfidRead(lane)"
               >
@@ -50,7 +50,7 @@
                 color: getContrastColor(getLaneColor(lane)),
                 boxShadow: `0 2px 8px ${getLaneColor(lane)}40`
               }"
-              title="Click to map spool"
+              :title="$t('app.vividMms.click_to_map_spool').toString()"
               @click.stop="editFilament(lane)"
             >
               <div class="filament-info">
@@ -71,14 +71,19 @@
           </div>
         </div>
 
-        <div class="filament-path-wrapper">
+        <div
+          class="filament-path-wrapper"
+          style="line-height: 0;"
+        >
+          <!-- TOP SVG: Funnel -->
           <svg
-            viewBox="0 0 300 120"
+            viewBox="0 0 300 40"
             class="filament-svg"
+            style="display: block;"
           >
-            <!-- Background paths (unified to prevent overlap opacity compounding) -->
+            <!-- Background paths -->
             <path
-              d="M 37.5 0 L 37.5 40 L 262.5 40 M 112.5 0 L 112.5 45 M 187.5 0 L 187.5 40 M 262.5 0 L 262.5 40"
+              d="M 37.5 0 L 37.5 40 M 112.5 0 L 112.5 40 M 187.5 0 L 187.5 40 M 262.5 0 L 262.5 40 M 37.5 40 L 262.5 40"
               stroke="currentColor"
               opacity="0.4"
               stroke-width="3"
@@ -89,11 +94,10 @@
 
             <!-- Foreground paths for each lane -->
             <template v-for="lane in [0, 1, 2, 3]">
-              <!-- Solid colored filament -->
               <path
-                v-if="getPathD(lane)"
+                v-if="getTopPathD(lane)"
                 :key="`path-${lane}`"
-                :d="getPathD(lane)"
+                :d="getTopPathD(lane)"
                 :stroke="getLaneColor(lane)"
                 stroke-width="5"
                 fill="none"
@@ -101,11 +105,10 @@
                 stroke-linecap="round"
                 class="filament-strand"
               />
-              <!-- Flow animation overlay -->
               <path
-                v-if="getPathD(lane) && getAnimationClass(lane)"
+                v-if="getTopPathD(lane) && getAnimationClass(lane)"
                 :key="`path-anim-${lane}`"
-                :d="getPathD(lane)"
+                :d="getTopPathD(lane)"
                 stroke="#ffffff"
                 opacity="0.5"
                 stroke-width="5"
@@ -115,161 +118,215 @@
                 :class="['filament-strand', getAnimationClass(lane)]"
               />
             </template>
-
-            <!-- Buffer Hub -->
-            <rect
-              x="102.5"
-              y="45"
-              width="20"
-              height="24"
-              rx="3"
-              fill="currentColor"
-              fill-opacity="0.1"
-              stroke="currentColor"
-              opacity="0.4"
-              stroke-width="2"
-            />
-            <!-- Buffer internal coil -->
-            <circle
-              cx="112.5"
-              cy="57"
-              r="5"
-              fill="none"
-              stroke="currentColor"
-              opacity="0.4"
-              stroke-width="2"
-            />
-            <circle
-              cx="112.5"
-              cy="57"
-              r="2"
-              fill="currentColor"
-              opacity="0.4"
-            />
-
-            <!-- Shared Filament Path (Toolhead downstream) -->
-            <!-- Background track -->
-            <line
-              x1="112.5"
-              y1="69"
-              x2="112.5"
-              y2="85"
-              stroke="currentColor"
-              opacity="0.4"
-              stroke-width="5"
-            />
-
-            <!-- Toolhead Downstream Foreground Solid -->
-            <line
-              v-if="physicalOutlet"
-              x1="112.5"
-              y1="69"
-              x2="112.5"
-              y2="85"
-              :stroke="activeColor"
-              stroke-width="5"
-              stroke-linecap="round"
-              class="filament-strand"
-            />
-            <!-- Toolhead Downstream Flow Animation Overlay -->
-            <line
-              v-if="physicalOutlet && getAnimationClass(physicalLane !== null ? physicalLane : 0)"
-              x1="112.5"
-              y1="69"
-              x2="112.5"
-              y2="85"
-              stroke="#ffffff"
-              opacity="0.5"
-              stroke-width="5"
-              stroke-linecap="round"
-              :class="['filament-strand', getAnimationClass(physicalLane !== null ? physicalLane : 0)]"
-            />
-
-            <!-- Extruder/Nozzle Indicator -->
-            <!-- Main Extruder Block -->
-            <rect
-              x="102.5"
-              y="85"
-              width="20"
-              height="24"
-              rx="2"
-              fill="currentColor"
-              opacity="0.4"
-            />
-            <!-- Inner Filament Window -->
-            <rect
-              x="106.5"
-              y="89"
-              width="12"
-              height="16"
-              rx="1"
-              :fill="physicalEntry ? activeColor : 'transparent'"
-            />
-            <!-- Nozzle Tip -->
-            <polygon
-              points="106.5,109 118.5,109 112.5,117"
-              fill="currentColor"
-              opacity="0.4"
-            />
           </svg>
         </div>
 
-        <!-- Tips Panel (Right side) -->
-        <div class="mms-tips-panel">
-          <h3>Tips</h3>
-          <p>Choose an MMS slot then press "Load" to automatically load filament.</p>
-          <p
-            v-if="mmsStatus"
-            class="mt-4"
-          >
-            <strong>Status:</strong> {{ mmsStatus }}
-          </p>
+        <!-- LOWER SECTION: Nozzle on left, Tips on right -->
+        <div
+          class="mms-lower-section"
+          style="display: flex; flex-direction: row; align-items: flex-end;"
+        >
+          <!-- BOTTOM SVG: Nozzle (takes up exactly 25% width to align with X=37.5) -->
+          <div style="width: 25%; flex-shrink: 0; line-height: 0;">
+            <svg
+              viewBox="0 40 75 90"
+              class="filament-svg"
+              style="display: block; overflow: visible;"
+            >
+              <!-- Buffer Input -->
+              <line
+                x1="37.5"
+                y1="40"
+                x2="37.5"
+                y2="55"
+                stroke="currentColor"
+                opacity="0.4"
+                stroke-width="3"
+              />
+              <line
+                v-if="activeLaneHasGate"
+                x1="37.5"
+                y1="40"
+                x2="37.5"
+                y2="55"
+                :stroke="activeColor"
+                stroke-width="5"
+                class="filament-strand"
+              />
+              <line
+                v-if="activeLaneHasGate && activeAnimationClass"
+                x1="37.5"
+                y1="40"
+                x2="37.5"
+                y2="55"
+                stroke="#ffffff"
+                opacity="0.5"
+                stroke-width="5"
+                :class="['filament-strand', activeAnimationClass]"
+              />
 
+              <!-- Buffer Hub -->
+              <rect
+                x="27.5"
+                y="55"
+                width="20"
+                height="24"
+                rx="3"
+                fill="currentColor"
+                fill-opacity="0.1"
+                stroke="currentColor"
+                opacity="0.4"
+                stroke-width="2"
+              />
+              <circle
+                cx="37.5"
+                cy="67"
+                r="5"
+                fill="none"
+                stroke="currentColor"
+                opacity="0.4"
+                stroke-width="2"
+              />
+              <circle
+                cx="37.5"
+                cy="67"
+                r="2"
+                fill="currentColor"
+                opacity="0.4"
+              />
+
+              <!-- Shared Path -->
+              <line
+                x1="37.5"
+                y1="79"
+                x2="37.5"
+                y2="95"
+                stroke="currentColor"
+                opacity="0.4"
+                stroke-width="3"
+              />
+              <line
+                v-if="physicalOutlet"
+                x1="37.5"
+                y1="79"
+                x2="37.5"
+                y2="95"
+                :stroke="activeColor"
+                stroke-width="5"
+                stroke-linecap="round"
+                class="filament-strand"
+              />
+              <line
+                v-if="physicalOutlet && activeAnimationClass"
+                x1="37.5"
+                y1="79"
+                x2="37.5"
+                y2="95"
+                stroke="#ffffff"
+                opacity="0.5"
+                stroke-width="5"
+                stroke-linecap="round"
+                :class="['filament-strand', activeAnimationClass]"
+              />
+
+              <!-- Extruder Block -->
+              <rect
+                x="27.5"
+                y="95"
+                width="20"
+                height="24"
+                rx="2"
+                fill="currentColor"
+                opacity="0.4"
+              />
+              <rect
+                x="31.5"
+                y="99"
+                width="12"
+                height="16"
+                rx="1"
+                :fill="physicalEntry ? activeColor : 'transparent'"
+              />
+              <polygon
+                points="31.5,119 43.5,119 37.5,127"
+                fill="currentColor"
+                opacity="0.4"
+              />
+            </svg>
+          </div>
+
+          <!-- Tips Panel (Right side) -->
           <div
-            class="mt-4 d-flex flex-column"
-            style="gap: 8px;"
+            class="mms-tips-panel"
+            style="flex: 1; margin: 8px 16px 0 0; max-width: 100%;"
           >
-            <v-btn
-              color="success"
-              :disabled="!canExecuteAction || selectedLane === null || activeEntry"
-              @click="loadLane"
+            <h3
+              class="mt-0 mb-2"
+              style="font-size: 16px; opacity: 0.9;"
             >
-              <v-icon left>
-                mdi-download
-              </v-icon>
-              Load Filament
-            </v-btn>
+              {{ $t('app.vividMms.tips') }}
+            </h3>
+            <p
+              class="mb-2"
+              style="font-size: 13px; opacity: 0.7;"
+            >
+              {{ $t('app.vividMms.choose_mms_slot_load') }}
+            </p>
+            <p
+              v-if="mmsStatus"
+              class="mb-3"
+              style="font-size: 13px; opacity: 0.8;"
+            >
+              <strong>{{ $t('app.vividMms.status') }}</strong> {{ mmsStatus }}
+            </p>
 
-            <v-btn
-              color="error"
-              :disabled="!canExecuteAction || selectedLane === null || !activeOutlet"
-              @click="unloadLane"
-            >
-              <v-icon left>
-                mdi-eject
-              </v-icon>
-              Eject Filament
-            </v-btn>
+            <div class="mms-actions-grid">
+              <v-btn
+                color="success"
+                class="white--text"
+                :disabled="!canExecuteAction || selectedLane === null || activeEntry"
+                @click="loadLane"
+              >
+                <v-icon left>
+                  mdi-download
+                </v-icon>
+                {{ $t('app.vividMms.load_filament') }}
+              </v-btn>
 
-            <v-btn
-              :disabled="!canExecuteAction"
-              @click="brushNozzle"
-            >
-              <v-icon left>
-                mdi-brush
-              </v-icon>
-              Brush Nozzle
-            </v-btn>
+              <v-btn
+                color="error"
+                class="white--text"
+                :disabled="!canExecuteAction || selectedLane === null || !activeOutlet"
+                @click="unloadLane"
+              >
+                <v-icon left>
+                  mdi-eject
+                </v-icon>
+                {{ $t('app.vividMms.eject_filament') }}
+              </v-btn>
 
-            <v-btn
-              :disabled="!canExecuteAction"
-              @click="cutFilament"
-            >
-              <v-icon left>
-                mdi-content-cut
-              </v-icon>
-              Cut Filament
-            </v-btn>
+              <v-btn
+                color="secondary"
+                :disabled="!canExecuteAction"
+                @click="brushNozzle"
+              >
+                <v-icon left>
+                  mdi-brush
+                </v-icon>
+                {{ $t('app.vividMms.brush_nozzle') }}
+              </v-btn>
+
+              <v-btn
+                color="secondary"
+                :disabled="!canExecuteAction"
+                @click="cutFilament"
+              >
+                <v-icon left>
+                  mdi-content-cut
+                </v-icon>
+                {{ $t('app.vividMms.cut_filament') }}
+              </v-btn>
+            </div>
           </div>
         </div>
       </div>
@@ -484,7 +541,17 @@ export default class FilamentPath extends Vue {
     return slot.outlet === 1
   }
 
-  getPathD (laneIndex: number) {
+  get activeLaneHasGate () {
+    if (this.physicalLane === null) return false
+    const slot = this.slotsData[this.physicalLane]
+    return slot && slot.gate === 1
+  }
+
+  get activeAnimationClass () {
+    return this.physicalLane !== null ? this.getAnimationClass(this.physicalLane) : ''
+  }
+
+  getTopPathD (laneIndex: number) {
     const slot = this.slotsData[laneIndex]
     if (!slot) return ''
 
@@ -493,10 +560,10 @@ export default class FilamentPath extends Vue {
 
     if (slot.inlet === 1) {
       if (slot.gate === 1) {
-        if (laneIndex === 1) {
-          path += ' L 112.5 45'
+        if (laneIndex === 0) {
+          path += ' L 37.5 40'
         } else {
-          path += ` L ${startX} 40 L 112.5 40 L 112.5 45`
+          path += ` L ${startX} 40 L 37.5 40`
         }
       } else {
         // Just the stub
@@ -646,17 +713,21 @@ export default class FilamentPath extends Vue {
 .spacer { flex: 1; }
 
 .mms-tips-panel {
-  flex: 0 0 250px;
   display: flex;
   flex-direction: column;
-  background: var(--v-background-base, #121216);
+  background: rgba(127, 127, 127, 0.1);
   border-radius: 12px;
   padding: 16px;
-  border: 1px solid var(--v-background-lighten1, #2a2a35);
+  border: 1px solid rgba(127, 127, 127, 0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.mms-tips-panel h3 { margin-top: 0; font-size: 16px; color: currentColor; }
-.mms-tips-panel p { font-size: 14px; color: currentColor; opacity: 0.7; }
+.mms-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: auto;
+}
 
 .filament-strand { transition: d 0.3s ease; }
 .animated-path { stroke-dasharray: 12; animation: dash 1s linear infinite; }
